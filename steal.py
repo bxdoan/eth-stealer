@@ -7,22 +7,20 @@ Provider = 'https://eth-mainnet.g.alchemy.com/v2/qzq9rBJLZpygokkr-JVb0J26UGF6yGK
 
 def gen_wallet(addr_num: int = ADDR_NUM) -> tuple:
     # Generate random mnemonic
-    mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+    mnemonic       = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
     # Generate seed from mnemonic
-    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
-
+    seed_bytes     = Bip39SeedGenerator(mnemonic).Generate()
     # Construct from seed
-    # bip44_mst_ctx = Bip39MnemonicDecoder.Decode(mnemonic)
-    bip44_mst_ctx = Bip44.FromSeed(seed_bytes, Bip44Coins.ETHEREUM)
+    bip44_mst_ctx  = Bip44.FromSeed(seed_bytes, Bip44Coins.ETHEREUM)
     # Derive BIP44 account keys: m/44'/0'/0'
-    bip44_acc_ctx = bip44_mst_ctx.Purpose().Coin().Account(0)
+    bip44_acc_ctx  = bip44_mst_ctx.Purpose().Coin().Account(0)
     # Derive BIP44 chain keys: m/44'/0'/0'/0
-    bip44_chg_ctx = bip44_acc_ctx.Change(Bip44Changes.CHAIN_EXT)
+    bip44_chg_ctx  = bip44_acc_ctx.Change(Bip44Changes.CHAIN_EXT)
     # Derive addresses: m/44'/0'/0'/0/i
     bip44_addr_ctx = bip44_chg_ctx.AddressIndex(addr_num)
-    private_key = bip44_addr_ctx.PrivateKey().Raw().ToHex()
-    address     = bip44_addr_ctx.PublicKey().ToAddress()
-    return mnemonic, private_key, address
+    pk             = bip44_addr_ctx.PrivateKey().Raw().ToHex()
+    addr           = bip44_addr_ctx.PublicKey().ToAddress()
+    return mnemonic, pk, addr
 
 
 def get_balance(addr : str = None) -> float:
@@ -35,9 +33,9 @@ def get_balance(addr : str = None) -> float:
 
 if __name__ == "__main__":
     for i in range(0, 1000):
-        mnemonic, private_key, address = gen_wallet()
+        seed_phrase, private_key, address = gen_wallet()
         # check balance of address
         balance = get_balance(address)
         if balance > 0:
-            print(f"Found: {mnemonic=} {address=} {private_key=}")
+            print(f"Found: {seed_phrase=} {address=} {private_key=}")
             break
