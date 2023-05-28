@@ -1,2 +1,3 @@
 bip-utils
 web3
+python-dotenv

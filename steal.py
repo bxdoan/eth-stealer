@@ -1,8 +1,13 @@
 from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip44, Bip44Changes, Bip44Coins
 from web3 import Web3
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 ADDR_NUM: int = 0
-Provider = 'https://eth-mainnet.g.alchemy.com/v2/qzq9rBJLZpygokkr-JVb0J26UGF6yGKl'
+URL = 'https://rpc.ankr.com/eth'
+Provider = os.environ.get("PROVIDER", URL)
 
 
 def gen_wallet(addr_num: int = ADDR_NUM) -> tuple:
@@ -20,6 +25,7 @@ def gen_wallet(addr_num: int = ADDR_NUM) -> tuple:
     bip44_addr_ctx = bip44_chg_ctx.AddressIndex(addr_num)
     pk             = bip44_addr_ctx.PrivateKey().Raw().ToHex()
     addr           = bip44_addr_ctx.PublicKey().ToAddress()
+    mnemonic       = mnemonic.ToStr()
     return mnemonic, pk, addr
 
 
@@ -32,10 +38,11 @@ def get_balance(addr : str = None) -> float:
 
 
 if __name__ == "__main__":
-    for i in range(0, 1000):
+    for i in range(0, 100000):
         seed_phrase, private_key, address = gen_wallet()
         # check balance of address
         balance = get_balance(address)
+        print(f"Checking {i}: {address=} {balance=}")
         if balance > 0:
-            print(f"Found: {seed_phrase=} {address=} {private_key=}")
+            print(f"Found: {address=} {private_key=} {seed_phrase=} ")
             break
