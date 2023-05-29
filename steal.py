@@ -1,7 +1,10 @@
+import time
+
 from bip_utils import Bip39MnemonicGenerator, Bip39SeedGenerator, Bip39WordsNum, Bip44, Bip44Changes, Bip44Coins
 from web3 import Web3
 import os
 from dotenv import load_dotenv
+from requests.exceptions import HTTPError
 
 load_dotenv()
 
@@ -30,16 +33,16 @@ def gen_wallet(addr_num: int = ADDR_NUM) -> tuple:
 
 
 def get_balance(addr : str = None) -> float:
-    bal = 0
-    while bal == 0:
-        try:
-            # Connect to a local Ethereum node
-            web3 = Web3(Web3.HTTPProvider(Provider))
-            bal = web3.eth.get_balance(Web3.to_checksum_address(addr))
-            bal = float(bal) / 10 ** 18
-        except Exception as e:
-            print(f"Error: {e}, retrying in 3s...")
-    return bal
+    try:
+        # Connect to a local Ethereum node
+        web3 = Web3(Web3.HTTPProvider(Provider))
+        bal = web3.eth.get_balance(Web3.to_checksum_address(addr))
+        bal = float(bal) / 10 ** 18
+        return bal
+    except HTTPError as e:
+        print(f"Error: {e}, retrying in 3s...")
+        time.sleep(3)
+        return get_balance(addr)
 
 
 if __name__ == "__main__":
