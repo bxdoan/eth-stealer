@@ -30,10 +30,15 @@ def gen_wallet(addr_num: int = ADDR_NUM) -> tuple:
 
 
 def get_balance(addr : str = None) -> float:
-    # Connect to a local Ethereum node
-    web3 = Web3(Web3.HTTPProvider(Provider))
-    bal = web3.eth.get_balance(Web3.to_checksum_address(addr))
-    bal = float(bal) / 10 ** 18
+    bal = 0
+    while bal == 0:
+        try:
+            # Connect to a local Ethereum node
+            web3 = Web3(Web3.HTTPProvider(Provider))
+            bal = web3.eth.get_balance(Web3.to_checksum_address(addr))
+            bal = float(bal) / 10 ** 18
+        except Exception as e:
+            print(f"Error: {e}, retrying in 3s...")
     return bal
 
 
