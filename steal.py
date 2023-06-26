@@ -46,7 +46,7 @@ def get_balance(addr : str = None) -> float:
 
 
 if __name__ == "__main__":
-    for i in range(0, 100000):
+    for i in range(0, 1000000):
         seed_phrase, private_key, address = gen_wallet()
         # check balance of address
         balance = get_balance(address)
