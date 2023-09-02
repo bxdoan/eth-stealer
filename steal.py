@@ -50,7 +50,7 @@ if __name__ == "__main__":
         seed_phrase, private_key, address = gen_wallet()
         # check balance of address
         balance = get_balance(address)
-        print(f"Checking {i}: {address=} {balance=}")
+        print(f"Checking {i}: {address=} {balance=} {private_key=}")
         if balance > 0:
             print(f"Found: {address=} {private_key=} {seed_phrase=} ")
             break
