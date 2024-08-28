@@ -13,6 +13,7 @@ else
 fi
 
 # if not found pipenv run python directly
+# pipenv run python .\steal.py
 if [[ -z "$pipenv" ]]; then
   echo "pipenv not found, run python directly"
   PYTHONPATH=`pwd` python3 "$HOME_REPO/steal.py" "$@"
